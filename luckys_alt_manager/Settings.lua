@@ -30,6 +30,17 @@ function LuckyAltManager.Settings:Init(db)
         end,
     })
 
+    panel:Section("Cinematics")
+
+    panel:Toggle({
+        label    = "Skip Cinematics",
+        desc     = "Automatically skip in-game cinematics and movies.",
+        checked  = db.skipCinematics.enabled,
+        onToggle = function(checked)
+            LuckyAltManager.SkipCinematics:SetEnabled(checked)
+        end,
+    })
+
     panel:Section("Delver's Call")
 
     panel:Toggle({

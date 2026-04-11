@@ -20,6 +20,9 @@ local DB_DEFAULTS = {
     questRewardAdvisor = {
         shown = true,
     },
+    skipCinematics = {
+        enabled = true,
+    },
 }
 
 local PREFIX = "|cffc9a84cAlt Manager|r:"
@@ -54,6 +57,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     LuckyAltManager.DelversCall:Init(LuckyAltManagerDB.delversCall)
     LuckyAltManager.SpecStats:Init(LuckyAltManagerDB.specStats)
     LuckyAltManager.QuestRewardAdvisor:Init(LuckyAltManagerDB.questRewardAdvisor)
+    LuckyAltManager.SkipCinematics:Init(LuckyAltManagerDB.skipCinematics)
     LuckyAltManager.Settings:Init(LuckyAltManagerDB)
 
     self:UnregisterEvent("ADDON_LOADED")

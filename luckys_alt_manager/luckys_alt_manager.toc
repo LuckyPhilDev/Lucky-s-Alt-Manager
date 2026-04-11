@@ -10,5 +10,6 @@ luckys_alt_manager.lua
 StatPriorities.lua
 SpecStats.lua
 QuestRewardAdvisor.lua
+SkipCinematics.lua
 DelversCall.lua
 Settings.lua
