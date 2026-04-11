@@ -1,0 +1,10 @@
+## Interface: 120000
+## Title: Lucky's Alt Manager
+## Notes: Leveling and alt management tools.
+## Version: 1.0.0
+## Author: Lucky Phil
+## SavedVariables: LuckyAltManagerDB
+
+luckys_alt_manager.lua
+DelversCall.lua
+Settings.lua
