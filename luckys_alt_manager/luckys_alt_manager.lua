@@ -6,6 +6,7 @@ LuckyAltManager = LuckyAltManager or {}
 local ADDON_NAME = "luckys_alt_manager"
 
 local DB_DEFAULTS = {
+    devMode = false,
     delversCall = {
         devMode    = false,
         xpPerQuest = 0,
@@ -16,7 +17,18 @@ local DB_DEFAULTS = {
         shown    = true,
         framePos = nil,
     },
+    questRewardAdvisor = {
+        shown = true,
+    },
 }
+
+local PREFIX = "|cffc9a84cAlt Manager|r:"
+
+function LuckyAltManager.DevLog(module, msg)
+    if LuckyAltManagerDB and LuckyAltManagerDB.devMode then
+        print(PREFIX .. " |cff8a7e6a[" .. module .. "]|r " .. tostring(msg))
+    end
+end
 
 local function ApplyDefaults(target, defaults)
     for key, default in pairs(defaults) do
@@ -41,6 +53,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
 
     LuckyAltManager.DelversCall:Init(LuckyAltManagerDB.delversCall)
     LuckyAltManager.SpecStats:Init(LuckyAltManagerDB.specStats)
+    LuckyAltManager.QuestRewardAdvisor:Init(LuckyAltManagerDB.questRewardAdvisor)
     LuckyAltManager.Settings:Init(LuckyAltManagerDB)
 
     self:UnregisterEvent("ADDON_LOADED")

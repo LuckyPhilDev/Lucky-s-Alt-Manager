@@ -18,6 +18,18 @@ function LuckyAltManager.Settings:Init(db)
         end,
     })
 
+    panel:Section("Quest Rewards")
+
+    panel:Toggle({
+        label    = "Quest Reward Spec Hints",
+        desc     = "Overlay spec icons on quest choice rewards to show which spec prefers each item.",
+        tooltip  = "Only active while under max level. Icons appear based on secondary stat priority data. Hides automatically for specs or items with no relevant data.",
+        checked  = db.questRewardAdvisor.shown,
+        onToggle = function(checked)
+            LuckyAltManager.QuestRewardAdvisor:SetShown(checked)
+        end,
+    })
+
     panel:Section("Delver's Call")
 
     panel:Toggle({
@@ -27,6 +39,17 @@ function LuckyAltManager.Settings:Init(db)
         checked  = db.delversCall.shown,
         onToggle = function(checked)
             LuckyAltManager.DelversCall:SetShown(checked)
+        end,
+    })
+
+    panel:Section("Developer")
+
+    panel:Toggle({
+        label    = "Dev Mode",
+        desc     = "Print debug messages to chat.",
+        checked  = db.devMode,
+        onToggle = function(checked)
+            db.devMode = checked
         end,
     })
 end
