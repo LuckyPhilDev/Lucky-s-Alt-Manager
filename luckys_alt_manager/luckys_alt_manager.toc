@@ -4,7 +4,10 @@
 ## Version: 1.0.0
 ## Author: Lucky Phil
 ## SavedVariables: LuckyAltManagerDB
+## OptionalDeps: Luckys_Utils
 
 luckys_alt_manager.lua
+StatPriorities.lua
+SpecStats.lua
 DelversCall.lua
 Settings.lua

@@ -12,6 +12,10 @@ local DB_DEFAULTS = {
         shown      = true,
         framePos   = nil,
     },
+    specStats = {
+        shown    = true,
+        framePos = nil,
+    },
 }
 
 local function ApplyDefaults(target, defaults)
@@ -36,6 +40,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     ApplyDefaults(LuckyAltManagerDB, DB_DEFAULTS)
 
     LuckyAltManager.DelversCall:Init(LuckyAltManagerDB.delversCall)
+    LuckyAltManager.SpecStats:Init(LuckyAltManagerDB.specStats)
     LuckyAltManager.Settings:Init(LuckyAltManagerDB)
 
     self:UnregisterEvent("ADDON_LOADED")
