@@ -23,6 +23,9 @@ local DB_DEFAULTS = {
     skipCinematics = {
         enabled = true,
     },
+    autoQuest = {
+        enabled = true,
+    },
 }
 
 local PREFIX = "|cffc9a84cAlt Manager|r:"
@@ -58,6 +61,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     LuckyAltManager.SpecStats:Init(LuckyAltManagerDB.specStats)
     LuckyAltManager.QuestRewardAdvisor:Init(LuckyAltManagerDB.questRewardAdvisor)
     LuckyAltManager.SkipCinematics:Init(LuckyAltManagerDB.skipCinematics)
+    LuckyAltManager.AutoQuest:Init(LuckyAltManagerDB.autoQuest)
     LuckyAltManager.Settings:Init(LuckyAltManagerDB)
 
     self:UnregisterEvent("ADDON_LOADED")

@@ -82,7 +82,7 @@ local function GetChoiceButtons(numChoices)
             for _, obj in ipairs(buttons) do
                 map[obj.index] = obj
             end
-            return map
+            return map, true
         end
     end
 
@@ -96,10 +96,10 @@ local function GetChoiceButtons(numChoices)
                 map[i] = frame
             end
         end
-        if next(map) then return map end
+        if next(map) then return map, false end
     end
 
-    return nil
+    return nil, false
 end
 
 -- ── Overlays ──────────────────────────────────────────────────────────────────
@@ -125,11 +125,15 @@ local function GetOrCreateOverlay(i, parent)
     return f
 end
 
-local function ShowOverlay(slotIndex, itemFrame, specIDs)
+local function ShowOverlay(slotIndex, itemFrame, specIDs, isDUI)
     local overlay = GetOrCreateOverlay(slotIndex, itemFrame)
 
     overlay:ClearAllPoints()
-    overlay:SetPoint("BOTTOMLEFT", itemFrame, "BOTTOMLEFT", 2, 2)
+    if isDUI then
+        overlay:SetPoint("TOPLEFT", itemFrame, "TOPLEFT", -6, 3)
+    else
+        overlay:SetPoint("BOTTOMLEFT", itemFrame, "BOTTOMLEFT", 2, 2)
+    end
     overlay:SetWidth(#specIDs * (ICON_SIZE + 4) - 2)
 
     for i, specID in ipairs(specIDs) do
@@ -238,7 +242,7 @@ local function AnnotateChoices()
     end
 
     -- Find visible choice buttons
-    local choiceButtons = GetChoiceButtons(numChoices)
+    local choiceButtons, isDUI = GetChoiceButtons(numChoices)
     if not choiceButtons then
         DevLog("No choice buttons found")
         return
@@ -247,7 +251,7 @@ local function AnnotateChoices()
     -- Place overlays
     for i = 1, numChoices do
         if itemSpecMap[i] and choiceButtons[i] then
-            ShowOverlay(i, choiceButtons[i], itemSpecMap[i])
+            ShowOverlay(i, choiceButtons[i], itemSpecMap[i], isDUI)
         end
     end
 end

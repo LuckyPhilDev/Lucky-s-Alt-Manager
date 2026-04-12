@@ -11,5 +11,6 @@ StatPriorities.lua
 SpecStats.lua
 QuestRewardAdvisor.lua
 SkipCinematics.lua
+AutoQuest.lua
 DelversCall.lua
 Settings.lua

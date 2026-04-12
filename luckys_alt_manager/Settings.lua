@@ -30,6 +30,18 @@ function LuckyAltManager.Settings:Init(db)
         end,
     })
 
+    panel:Section("Quests")
+
+    panel:Toggle({
+        label    = "Auto Accept & Hand In Quests",
+        desc     = "Automatically accept and hand in quests. Hold Shift to pause.",
+        tooltip  = "Skips Delver's Call quests and quests with a reward choice. Hold Shift while interacting with an NPC to temporarily disable.",
+        checked  = db.autoQuest.enabled,
+        onToggle = function(checked)
+            LuckyAltManager.AutoQuest:SetEnabled(checked)
+        end,
+    })
+
     panel:Section("Cinematics")
 
     panel:Toggle({
