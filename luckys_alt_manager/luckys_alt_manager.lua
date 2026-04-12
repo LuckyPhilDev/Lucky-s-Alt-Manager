@@ -5,27 +5,29 @@ LuckyAltManager = LuckyAltManager or {}
 
 local ADDON_NAME = "luckys_alt_manager"
 
+LuckyAltManager.MAX_LEVEL = 90
+
 local DB_DEFAULTS = {
     devMode = false,
     statWeightOverrides = {},
     delversCall = {
         devMode    = false,
         xpPerQuest = 0,
-        shown      = true,
+        shown      = "leveling",
         framePos   = nil,
     },
     specStats = {
-        shown    = true,
+        shown    = "on",
         framePos = nil,
     },
     questRewardAdvisor = {
-        shown = true,
+        shown = "leveling",
     },
     skipCinematics = {
-        enabled = true,
+        enabled = "leveling",
     },
     autoQuest = {
-        enabled = true,
+        enabled = "leveling",
     },
     minimap = {},
 }
@@ -36,6 +38,15 @@ function LuckyAltManager.DevLog(module, msg)
     if LuckyAltManagerDB and LuckyAltManagerDB.devMode then
         print(PREFIX .. " |cff8a7e6a[" .. module .. "]|r " .. tostring(msg))
     end
+end
+
+--- Resolve a 3-way setting ("on", "off", "leveling") to a boolean.
+function LuckyAltManager.IsFeatureActive(settingValue)
+    if settingValue == "on" then return true end
+    if settingValue == "leveling" then
+        return UnitLevel("player") < LuckyAltManager.MAX_LEVEL
+    end
+    return false
 end
 
 local function ApplyDefaults(target, defaults)
@@ -51,13 +62,40 @@ local function ApplyDefaults(target, defaults)
     end
 end
 
+-- Migrate old boolean settings to 3-way string values.
+local function MigrateBoolToTriState(tbl, key)
+    if type(tbl[key]) == "boolean" then
+        tbl[key] = tbl[key] and "on" or "off"
+    end
+end
+
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:SetScript("OnEvent", function(self, event, addonName)
+    if event == "PLAYER_LEVEL_UP" then
+        if UnitLevel("player") >= LuckyAltManager.MAX_LEVEL then
+            local db = LuckyAltManagerDB
+            if db.specStats.shown == "leveling" then
+                LuckyAltManager.SpecStats:SetShown("leveling")
+            end
+            if db.delversCall.shown == "leveling" then
+                LuckyAltManager.DelversCall:SetShown("leveling")
+            end
+        end
+        return
+    end
+
     if event ~= "ADDON_LOADED" or addonName ~= ADDON_NAME then return end
 
     LuckyAltManagerDB = LuckyAltManagerDB or {}  ---@diagnostic disable-line: lowercase-global
     ApplyDefaults(LuckyAltManagerDB, DB_DEFAULTS)
+
+    -- Migrate boolean -> tri-state for existing installs
+    MigrateBoolToTriState(LuckyAltManagerDB.specStats, "shown")
+    MigrateBoolToTriState(LuckyAltManagerDB.questRewardAdvisor, "shown")
+    MigrateBoolToTriState(LuckyAltManagerDB.autoQuest, "enabled")
+    MigrateBoolToTriState(LuckyAltManagerDB.skipCinematics, "enabled")
+    MigrateBoolToTriState(LuckyAltManagerDB.delversCall, "shown")
 
     LuckyAltManager.StatWeightOverrides:Init(LuckyAltManagerDB)
     LuckyAltManager.DelversCall:Init(LuckyAltManagerDB.delversCall)
@@ -91,4 +129,5 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     })
 
     self:UnregisterEvent("ADDON_LOADED")
+    self:RegisterEvent("PLAYER_LEVEL_UP")
 end)

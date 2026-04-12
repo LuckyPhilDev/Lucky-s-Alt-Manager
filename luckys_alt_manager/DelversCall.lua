@@ -288,7 +288,7 @@ local function UpdateDisplay()
     local fillWidth = math.max(1, math.floor(trackerFrame.barMaxWidth * fillPct))
     trackerFrame.barFill:SetWidth(fillWidth)
 
-    trackerFrame:SetShown(db.shown)
+    trackerFrame:SetShown(LuckyAltManager.IsFeatureActive(db.shown))
 end
 
 local function BuildTrackerFrame()
@@ -343,7 +343,7 @@ local function BuildTrackerFrame()
     closeBtn:SetSize(18, 18)
     closeBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", 1, 1)
     closeBtn:SetScript("OnClick", function()
-        db.shown = false
+        db.shown = "off"
         f:Hide()
     end)
 
@@ -421,8 +421,8 @@ local function RegisterSlash()
             print("|cffc9a84cDelver's Call Tracker:|r XP data cleared.")
             UpdateDisplay()
         else
-            db.shown = not db.shown
-            if db.shown then
+            db.shown = (db.shown == "off") and "on" or "off"
+            if LuckyAltManager.IsFeatureActive(db.shown) then
                 trackerFrame:Show()
                 UpdateDisplay()
             else
@@ -461,7 +461,8 @@ end
 function LuckyAltManager.DelversCall:SetShown(value)
     db.shown = value
     if trackerFrame then
-        trackerFrame:SetShown(value)
-        if value then UpdateDisplay() end
+        local active = LuckyAltManager.IsFeatureActive(value)
+        trackerFrame:SetShown(active)
+        if active then UpdateDisplay() end
     end
 end

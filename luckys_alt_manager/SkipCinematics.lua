@@ -13,7 +13,7 @@ end
 local frame = CreateFrame("Frame")
 
 frame:SetScript("OnEvent", function(_, event, ...)
-    if not db.enabled then return end
+    if not LuckyAltManager.IsFeatureActive(db.enabled) then return end
 
     if event == "CINEMATIC_START" then
         DevLog("Cinematic started — skipping")

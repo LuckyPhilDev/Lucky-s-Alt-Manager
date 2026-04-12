@@ -4,25 +4,33 @@
 LuckyAltManager = LuckyAltManager or {}
 LuckyAltManager.Settings = {}
 
+local TRI_CHOICES = {
+    { value = "on",       label = "On" },
+    { value = "off",      label = "Off" },
+    { value = "leveling", label = "While Leveling" },
+}
+
 function LuckyAltManager.Settings:Init(db)
     local panel = LuckySettings:NewPanel("Lucky's Alt Manager")
     self.category = panel.category
 
-    panel:Toggle({
+    panel:Selector({
         label    = "Show Stat Priority Window",
         desc     = "Show a small floating window with your current spec's secondary stat priority.",
         tooltip  = "Displays stat priority for specs that have data. Hides automatically for unsupported specs.",
-        checked  = db.specStats.shown,
+        value    = db.specStats.shown,
+        choices  = TRI_CHOICES,
         gap      = 16,
-        onToggle = function(checked)
-            LuckyAltManager.SpecStats:SetShown(checked)
+        onChange = function(val)
+            db.specStats.shown = val
+            LuckyAltManager.SpecStats:SetShown(val)
         end,
     })
 
-    -- Stat weight override button (positioned below the toggle's description)
+    -- Stat weight override button (positioned below the selector's description)
     local anchor = panel.lastAnchor.desc or panel.lastAnchor
     local overrideBtn = LuckyUI.CreateButton(panel.content, "Customise Stat Weights", 160, 24)
-    overrideBtn:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 26, -6)
+    overrideBtn:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -6)
     overrideBtn:SetScript("OnClick", function()
         LuckyAltManager.StatWeightOverrides:Open()
     end)
@@ -30,48 +38,54 @@ function LuckyAltManager.Settings:Init(db)
 
     panel:Section("Quest Rewards")
 
-    panel:Toggle({
+    panel:Selector({
         label    = "Quest Reward Spec Hints",
         desc     = "Overlay spec icons on quest choice rewards to show which spec prefers each item.",
-        tooltip  = "Only active while under max level. Icons appear based on secondary stat priority data. Hides automatically for specs or items with no relevant data.",
-        checked  = db.questRewardAdvisor.shown,
-        onToggle = function(checked)
-            LuckyAltManager.QuestRewardAdvisor:SetShown(checked)
+        tooltip  = "Icons appear based on secondary stat priority data. Hides automatically for specs or items with no relevant data.",
+        value    = db.questRewardAdvisor.shown,
+        choices  = TRI_CHOICES,
+        onChange = function(val)
+            db.questRewardAdvisor.shown = val
+            LuckyAltManager.QuestRewardAdvisor:SetShown(val)
         end,
     })
 
     panel:Section("Quests")
 
-    panel:Toggle({
+    panel:Selector({
         label    = "Auto Accept & Hand In Quests",
         desc     = "Automatically accept and hand in quests. Hold Shift to pause.",
         tooltip  = "Skips Delver's Call quests and quests with a reward choice. Hold Shift while interacting with an NPC to temporarily disable.",
-        checked  = db.autoQuest.enabled,
-        onToggle = function(checked)
-            LuckyAltManager.AutoQuest:SetEnabled(checked)
+        value    = db.autoQuest.enabled,
+        choices  = TRI_CHOICES,
+        onChange = function(val)
+            db.autoQuest.enabled = val
         end,
     })
 
     panel:Section("Cinematics")
 
-    panel:Toggle({
+    panel:Selector({
         label    = "Skip Cinematics",
         desc     = "Automatically skip in-game cinematics and movies.",
-        checked  = db.skipCinematics.enabled,
-        onToggle = function(checked)
-            LuckyAltManager.SkipCinematics:SetEnabled(checked)
+        value    = db.skipCinematics.enabled,
+        choices  = TRI_CHOICES,
+        onChange = function(val)
+            db.skipCinematics.enabled = val
         end,
     })
 
     panel:Section("Delver's Call")
 
-    panel:Toggle({
+    panel:Selector({
         label    = "Show Delver's Call Window",
         desc     = "Show the Delver's Call quest tracker window.",
         tooltip  = "Toggles the floating window that tracks weekly Delver's Call quest completions and XP potential.",
-        checked  = db.delversCall.shown,
-        onToggle = function(checked)
-            LuckyAltManager.DelversCall:SetShown(checked)
+        value    = db.delversCall.shown,
+        choices  = TRI_CHOICES,
+        onChange = function(val)
+            db.delversCall.shown = val
+            LuckyAltManager.DelversCall:SetShown(val)
         end,
     })
 

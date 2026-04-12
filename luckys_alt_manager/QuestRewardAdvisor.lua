@@ -6,7 +6,6 @@
 LuckyAltManager = LuckyAltManager or {}
 LuckyAltManager.QuestRewardAdvisor = {}
 
-local MAX_LEVEL = 90
 local ICON_SIZE = 16
 
 local STAT_KEY = {
@@ -154,8 +153,7 @@ end
 
 local function AnnotateChoices()
     ClearOverlays()
-    if not db.shown then return end
-    if UnitLevel("player") >= MAX_LEVEL then return end
+    if not LuckyAltManager.IsFeatureActive(db.shown) then return end
 
     local numChoices = GetNumQuestChoices()
     if not numChoices or numChoices < 2 then return end
@@ -270,5 +268,5 @@ end
 
 function LuckyAltManager.QuestRewardAdvisor:SetShown(value)
     db.shown = value
-    if not value then ClearOverlays() end
+    if not LuckyAltManager.IsFeatureActive(value) then ClearOverlays() end
 end

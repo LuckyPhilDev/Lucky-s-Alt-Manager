@@ -66,7 +66,7 @@ local function UpdateDisplay()
     local specID = GetCurrentSpecID()
     local data   = specID and LuckyAltManager.StatPriorities[specID]
 
-    if not db.shown or not data then
+    if not LuckyAltManager.IsFeatureActive(db.shown) or not data then
         statsFrame:Hide()
         return
     end
@@ -130,7 +130,7 @@ local function BuildFrame()
     closeBtn:SetSize(18, 18)
     closeBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", 1, 1)
     closeBtn:SetScript("OnClick", function()
-        db.shown = false
+        db.shown = "off"
         f:Hide()
     end)
 

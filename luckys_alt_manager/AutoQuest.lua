@@ -24,7 +24,7 @@ end
 local frame = CreateFrame("Frame")
 
 frame:SetScript("OnEvent", function(_, event)
-    if not db.enabled then return end
+    if not LuckyAltManager.IsFeatureActive(db.enabled) then return end
     if IsShiftKeyDown() then
         DevLog("Shift held — skipping " .. event)
         return
