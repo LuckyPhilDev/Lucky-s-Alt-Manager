@@ -6,6 +6,7 @@ LuckyAltManager.Settings = {}
 
 function LuckyAltManager.Settings:Init(db)
     local panel = LuckySettings:NewPanel("Lucky's Alt Manager")
+    self.category = panel.category
 
     panel:Toggle({
         label    = "Show Stat Priority Window",
@@ -17,6 +18,15 @@ function LuckyAltManager.Settings:Init(db)
             LuckyAltManager.SpecStats:SetShown(checked)
         end,
     })
+
+    -- Stat weight override button (positioned below the toggle's description)
+    local anchor = panel.lastAnchor.desc or panel.lastAnchor
+    local overrideBtn = LuckyUI.CreateButton(panel.content, "Customise Stat Weights", 160, 24)
+    overrideBtn:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 26, -6)
+    overrideBtn:SetScript("OnClick", function()
+        LuckyAltManager.StatWeightOverrides:Open()
+    end)
+    panel.lastAnchor = overrideBtn
 
     panel:Section("Quest Rewards")
 

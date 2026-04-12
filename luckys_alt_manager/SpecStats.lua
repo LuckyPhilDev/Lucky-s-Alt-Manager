@@ -42,6 +42,22 @@ local function BuildPriorityString(data)
     return table.concat(parts)
 end
 
+-- Builds a weight display string for overridden specs, e.g.:
+--   "Haste 1.10  Crit 0.95  Mastery 0.90  Vers 0.85"
+local function BuildWeightString(weights)
+    local sorted = {}
+    for stat, w in pairs(weights) do
+        sorted[#sorted + 1] = { stat = stat, weight = w }
+    end
+    table.sort(sorted, function(a, b) return a.weight > b.weight end)
+
+    local parts = {}
+    for _, entry in ipairs(sorted) do
+        parts[#parts + 1] = string.format("|cffe8dcc8%s|r |cffffd100%.2f|r", entry.stat, entry.weight)
+    end
+    return table.concat(parts, "  ")
+end
+
 -- ── UI ────────────────────────────────────────────────────────────────────────
 
 local function UpdateDisplay()
@@ -55,8 +71,14 @@ local function UpdateDisplay()
         return
     end
 
-    statsFrame.specText:SetText("|cffffd100" .. data.label .. "|r")
-    statsFrame.priorityText:SetText(BuildPriorityString(data))
+    local weights, hasOverrides = LuckyAltManager.GetStatWeights(specID)
+    if hasOverrides and weights then
+        statsFrame.specText:SetText("|cffffd100" .. data.label .. "|r |cff8a7e6a(Custom)|r")
+        statsFrame.priorityText:SetText(BuildWeightString(weights))
+    else
+        statsFrame.specText:SetText("|cffffd100" .. data.label .. "|r")
+        statsFrame.priorityText:SetText(BuildPriorityString(data))
+    end
     statsFrame:Show()
 end
 
@@ -157,5 +179,9 @@ end
 
 function LuckyAltManager.SpecStats:SetShown(value)
     db.shown = value
+    UpdateDisplay()
+end
+
+function LuckyAltManager.SpecStats:RefreshDisplay()
     UpdateDisplay()
 end

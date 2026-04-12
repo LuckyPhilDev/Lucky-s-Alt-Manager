@@ -9,13 +9,6 @@ LuckyAltManager.QuestRewardAdvisor = {}
 local MAX_LEVEL = 90
 local ICON_SIZE = 16
 
-local REL_PENALTY = {
-    ["="]  = 0.00,
-    [">="] = 0.05,
-    [">"]  = 0.10,
-    [">>"] = 0.15,
-}
-
 local STAT_KEY = {
     Crit    = "ITEM_MOD_CRIT_RATING_SHORT",
     Haste   = "ITEM_MOD_HASTE_RATING_SHORT",
@@ -31,19 +24,6 @@ local function DevLog(msg)
 end
 
 -- ── Scoring ───────────────────────────────────────────────────────────────────
-
-local function BuildWeights(specData)
-    local weights = {}
-    local w = 1.0
-    for i, stat in ipairs(specData.stats) do
-        weights[stat] = w
-        local rel = specData.rels[i]
-        if rel then
-            w = math.max(0, w - (REL_PENALTY[rel] or 0))
-        end
-    end
-    return weights
-end
 
 local function ScoreItem(rawStats, weights)
     local score = 0
@@ -215,7 +195,7 @@ local function AnnotateChoices()
     local specBestItem = {}
     for _, specID in ipairs(specIDs) do
         local specData = LuckyAltManager.StatPriorities[specID]
-        local weights = BuildWeights(specData)
+        local weights = LuckyAltManager.GetStatWeights(specID)
         local bestIdx, bestScore = nil, 0
         local scoreParts = {}
         for i = 1, numChoices do
