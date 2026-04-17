@@ -16,10 +16,6 @@ local DB_DEFAULTS = {
         shown      = "leveling",
         framePos   = nil,
     },
-    specStats = {
-        shown    = "on",
-        framePos = nil,
-    },
     questRewardAdvisor = {
         shown = "leveling",
     },
@@ -30,6 +26,15 @@ local DB_DEFAULTS = {
         enabled = "leveling",
     },
     minimap = {},
+}
+
+-- Per-character saved variables. The stat-priority window is per-character
+-- so each alt can toggle it and position it independently.
+local CHAR_DB_DEFAULTS = {
+    specStats = {
+        shown    = "on",
+        framePos = nil,
+    },
 }
 
 local PREFIX = "|cffc9a84cAlt Manager|r:"
@@ -74,11 +79,10 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:SetScript("OnEvent", function(self, event, addonName)
     if event == "PLAYER_LEVEL_UP" then
         if UnitLevel("player") >= LuckyAltManager.MAX_LEVEL then
-            local db = LuckyAltManagerDB
-            if db.specStats.shown == "leveling" then
+            if LuckyAltManagerCharDB.specStats.shown == "leveling" then
                 LuckyAltManager.SpecStats:SetShown("leveling")
             end
-            if db.delversCall.shown == "leveling" then
+            if LuckyAltManagerDB.delversCall.shown == "leveling" then
                 LuckyAltManager.DelversCall:SetShown("leveling")
             end
         end
@@ -90,8 +94,23 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     LuckyAltManagerDB = LuckyAltManagerDB or {}  ---@diagnostic disable-line: lowercase-global
     ApplyDefaults(LuckyAltManagerDB, DB_DEFAULTS)
 
+    LuckyAltManagerCharDB = LuckyAltManagerCharDB or {}  ---@diagnostic disable-line: lowercase-global
+
+    -- One-time migration: move the (previously global) stat-priority window
+    -- settings into per-character storage so existing users keep their state.
+    if LuckyAltManagerDB.specStats and not LuckyAltManagerCharDB._migratedSpecStats then
+        LuckyAltManagerCharDB.specStats = {
+            shown    = LuckyAltManagerDB.specStats.shown,
+            framePos = LuckyAltManagerDB.specStats.framePos,
+        }
+        LuckyAltManagerCharDB._migratedSpecStats = true
+        LuckyAltManagerDB.specStats = nil
+    end
+
+    ApplyDefaults(LuckyAltManagerCharDB, CHAR_DB_DEFAULTS)
+
     -- Migrate boolean -> tri-state for existing installs
-    MigrateBoolToTriState(LuckyAltManagerDB.specStats, "shown")
+    MigrateBoolToTriState(LuckyAltManagerCharDB.specStats, "shown")
     MigrateBoolToTriState(LuckyAltManagerDB.questRewardAdvisor, "shown")
     MigrateBoolToTriState(LuckyAltManagerDB.autoQuest, "enabled")
     MigrateBoolToTriState(LuckyAltManagerDB.skipCinematics, "enabled")
@@ -99,11 +118,11 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
 
     LuckyAltManager.StatWeightOverrides:Init(LuckyAltManagerDB)
     LuckyAltManager.DelversCall:Init(LuckyAltManagerDB.delversCall)
-    LuckyAltManager.SpecStats:Init(LuckyAltManagerDB.specStats)
+    LuckyAltManager.SpecStats:Init(LuckyAltManagerCharDB.specStats)
     LuckyAltManager.QuestRewardAdvisor:Init(LuckyAltManagerDB.questRewardAdvisor)
     LuckyAltManager.SkipCinematics:Init(LuckyAltManagerDB.skipCinematics)
     LuckyAltManager.AutoQuest:Init(LuckyAltManagerDB.autoQuest)
-    LuckyAltManager.Settings:Init(LuckyAltManagerDB)
+    LuckyAltManager.Settings:Init(LuckyAltManagerDB, LuckyAltManagerCharDB)
 
     LuckyMinimap:Create({
         name    = "LuckyAltManagerMinimapButton",

@@ -10,19 +10,19 @@ local TRI_CHOICES = {
     { value = "leveling", label = "While Leveling" },
 }
 
-function LuckyAltManager.Settings:Init(db)
+function LuckyAltManager.Settings:Init(db, charDB)
     local panel = LuckySettings:NewPanel("Lucky's Alt Manager")
     self.category = panel.category
 
     panel:Selector({
-        label    = "Show Stat Priority Window",
-        desc     = "Show a small floating window with your current spec's secondary stat priority.",
+        label    = "Show Stat Priority Window |cff8a7e6a(per character)|r",
+        desc     = "Show a small floating window with your current spec's secondary stat priority. This setting is saved per character.",
         tooltip  = "Displays stat priority for specs that have data. Hides automatically for unsupported specs.",
-        value    = db.specStats.shown,
+        value    = charDB.specStats.shown,
         choices  = TRI_CHOICES,
         gap      = 16,
         onChange = function(val)
-            db.specStats.shown = val
+            charDB.specStats.shown = val
             LuckyAltManager.SpecStats:SetShown(val)
         end,
     })

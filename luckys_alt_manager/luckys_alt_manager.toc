@@ -4,6 +4,7 @@
 ## Version: 1.0.0
 ## Author: Lucky Phil
 ## SavedVariables: LuckyAltManagerDB
+## SavedVariablesPerCharacter: LuckyAltManagerCharDB
 ## OptionalDeps: Luckys_Utils
 
 luckys_alt_manager.lua
