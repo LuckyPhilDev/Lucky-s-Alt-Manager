@@ -1,1 +1,8 @@
 package-as: Lucky's Alt Manager
+
+move-folders:
+  Lucky's Alt Manager/luckys_alt_manager: luckys_alt_manager
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
