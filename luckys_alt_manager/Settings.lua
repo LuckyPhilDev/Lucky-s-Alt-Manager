@@ -14,6 +14,23 @@ function LuckyAltManager.Settings:Init(db, charDB)
     local panel = LuckySettings:NewPanel("Lucky's Alt Manager")
     self.category = panel.category
 
+    panel:Section("Windows")
+
+    panel:Slider({
+        label     = "Inactive Window Opacity",
+        desc      = "How visible the floating windows are when your cursor is not over them.",
+        key       = "AltMgrWindowAlpha",
+        min       = 0,
+        max       = 100,
+        value     = db.windowAlpha,
+        suffix    = "%",
+        onChanged = function(val)
+            db.windowAlpha = val
+            LuckyAltManager.SpecStats:ApplyAlpha()
+            LuckyAltManager.DelversCall:ApplyAlpha()
+        end,
+    })
+
     panel:Selector({
         label    = "Show Stat Priority Window |cff8a7e6a(per character)|r",
         desc     = "Show a small floating window with your current spec's secondary stat priority. This setting is saved per character.",

@@ -208,13 +208,21 @@ local function BuildTrackerFrame()
     title:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -8)
 
     f:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+        self:SetAlpha(1)
+        GameTooltip:SetOwner(self, "ANCHOR_NONE")
+        GameTooltip:ClearAllPoints()
+        GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -2)
         GameTooltip:AddLine("|cffffd100Delver's Call Tracker|r")
         GameTooltip:AddLine("|cffaaaaaa/delvers|r  or  |cffaaaaaa/dct|r — toggle", 1, 1, 1)
         GameTooltip:AddLine("|cffaaaaaa/dct reset|r — clear saved XP/quest value", 1, 1, 1)
         GameTooltip:Show()
     end)
-    f:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    f:SetScript("OnLeave", function(self)
+        self:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+        GameTooltip:Hide()
+    end)
+
+    f:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
 
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     closeBtn:SetSize(18, 18)
@@ -333,6 +341,12 @@ function LuckyAltManager.DelversCall:Init(database)
     end)
 
     DevLog("Loaded — xpPerQuest=" .. tostring(db.xpPerQuest))
+end
+
+function LuckyAltManager.DelversCall:ApplyAlpha()
+    if trackerFrame then
+        trackerFrame:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+    end
 end
 
 function LuckyAltManager.DelversCall:SetShown(value)

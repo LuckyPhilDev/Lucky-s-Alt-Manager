@@ -115,7 +115,10 @@ local function BuildFrame()
     end)
 
     f:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+        self:SetAlpha(1)
+        GameTooltip:SetOwner(self, "ANCHOR_NONE")
+        GameTooltip:ClearAllPoints()
+        GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -2)
         GameTooltip:AddLine("|cffffd100Stat Priority|r")
         GameTooltip:AddLine("|cff4fc3f7=|r   equal (interchangeable)", 1, 1, 1)
         GameTooltip:AddLine("|cff8a7e6a>=|r  marginally better", 1, 1, 1)
@@ -123,7 +126,12 @@ local function BuildFrame()
         GameTooltip:AddLine("|cffff6b6b>>|r  much better (significant gap)", 1, 1, 1)
         GameTooltip:Show()
     end)
-    f:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    f:SetScript("OnLeave", function(self)
+        self:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+        GameTooltip:Hide()
+    end)
+
+    f:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
 
     -- Close button
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
@@ -184,4 +192,10 @@ end
 
 function LuckyAltManager.SpecStats:RefreshDisplay()
     UpdateDisplay()
+end
+
+function LuckyAltManager.SpecStats:ApplyAlpha()
+    if statsFrame then
+        statsFrame:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+    end
 end

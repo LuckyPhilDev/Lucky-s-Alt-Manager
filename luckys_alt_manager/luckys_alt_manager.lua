@@ -9,6 +9,7 @@ LuckyAltManager.MAX_LEVEL = 90
 
 local DB_DEFAULTS = {
     devMode = false,
+    windowAlpha = 30,
     statWeightOverrides = {},
     delversCall = {
         devMode    = false,
