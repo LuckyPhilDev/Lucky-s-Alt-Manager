@@ -51,6 +51,16 @@ function LuckyAltManager.Settings:Init(db, charDB)
     overrideBtn:SetScript("OnClick", function()
         LuckyAltManager.StatWeightOverrides:Open()
     end)
+
+    local note = panel.content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    note:SetTextColor(0.54, 0.49, 0.42)
+    note:SetJustifyH("LEFT")
+    note:SetJustifyV("TOP")
+    note:SetPoint("TOPLEFT", overrideBtn, "TOPRIGHT", 12, 0)
+    note:SetPoint("RIGHT", panel.content, "RIGHT", -16, 0)
+    note:SetWordWrap(true)
+    note:SetText("Stat weights derived from Wowhead on 19 April 2026. Override them here if they're out of date or you're playing a different build.")
+
     panel.lastAnchor = overrideBtn
 
     panel:Section("Quest Rewards")
