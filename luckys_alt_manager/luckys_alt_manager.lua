@@ -125,6 +125,11 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     LuckyAltManager.AutoQuest:Init(LuckyAltManagerDB.autoQuest)
     LuckyAltManager.Settings:Init(LuckyAltManagerDB, LuckyAltManagerCharDB)
 
+    SLASH_LUCKYALTMANAGER1 = "/lam"
+    SlashCmdList["LUCKYALTMANAGER"] = function()
+        LuckySettings:Open(LuckyAltManager.Settings.category)
+    end
+
     LuckyMinimap:Create({
         name    = "LuckyAltManagerMinimapButton",
         icon    = "Interface\\Icons\\Achievement_Character_Human_Male",
