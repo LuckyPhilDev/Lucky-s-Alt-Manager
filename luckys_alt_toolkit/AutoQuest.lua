@@ -3,13 +3,13 @@
 -- Skips quests with "Delver's Call:" in the title, quests with reward
 -- choices, and any interaction while the Shift key is held.
 
-LuckyAltManager = LuckyAltManager or {}
-LuckyAltManager.AutoQuest = {}
+LuckyAltToolkit = LuckyAltToolkit or {}
+LuckyAltToolkit.AutoQuest = {}
 
 local db
 
 local function DevLog(msg)
-    LuckyAltManager.DevLog("AutoQuest", msg)
+    LuckyAltToolkit.DevLog("AutoQuest", msg)
 end
 
 local function IsExcluded()
@@ -24,7 +24,7 @@ end
 local frame = CreateFrame("Frame")
 
 frame:SetScript("OnEvent", function(_, event)
-    if not LuckyAltManager.IsFeatureActive(db.enabled) then return end
+    if not LuckyAltToolkit.IsFeatureActive(db.enabled) then return end
     if IsShiftKeyDown() then
         DevLog("Shift held — skipping " .. event)
         return
@@ -52,13 +52,13 @@ frame:SetScript("OnEvent", function(_, event)
     end
 end)
 
-function LuckyAltManager.AutoQuest:Init(database)
+function LuckyAltToolkit.AutoQuest:Init(database)
     db = database
     frame:RegisterEvent("QUEST_DETAIL")
     frame:RegisterEvent("QUEST_PROGRESS")
     frame:RegisterEvent("QUEST_COMPLETE")
 end
 
-function LuckyAltManager.AutoQuest:SetEnabled(value)
+function LuckyAltToolkit.AutoQuest:SetEnabled(value)
     db.enabled = value
 end

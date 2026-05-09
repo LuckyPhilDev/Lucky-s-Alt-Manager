@@ -1,8 +1,8 @@
 -- Settings
--- Registers Lucky's Alt Manager options in the WoW settings panel.
+-- Registers Lucky's Alt Toolkit options in the WoW settings panel.
 
-LuckyAltManager = LuckyAltManager or {}
-LuckyAltManager.Settings = {}
+LuckyAltToolkit = LuckyAltToolkit or {}
+LuckyAltToolkit.Settings = {}
 
 local TRI_CHOICES = {
     { value = "on",       label = "On" },
@@ -10,8 +10,8 @@ local TRI_CHOICES = {
     { value = "leveling", label = "While Leveling" },
 }
 
-function LuckyAltManager.Settings:Init(db, charDB)
-    local panel = LuckySettings:NewPanel("Lucky's Alt Manager")
+function LuckyAltToolkit.Settings:Init(db, charDB)
+    local panel = LuckySettings:NewPanel("Lucky's Alt Toolkit")
     self.category = panel.category
 
     panel:Section("Windows")
@@ -26,8 +26,8 @@ function LuckyAltManager.Settings:Init(db, charDB)
         suffix    = "%",
         onChanged = function(val)
             db.windowAlpha = val
-            LuckyAltManager.SpecStats:ApplyAlpha()
-            LuckyAltManager.DelversCall:ApplyAlpha()
+            LuckyAltToolkit.SpecStats:ApplyAlpha()
+            LuckyAltToolkit.DelversCall:ApplyAlpha()
         end,
     })
 
@@ -40,7 +40,7 @@ function LuckyAltManager.Settings:Init(db, charDB)
         gap      = 16,
         onChange = function(val)
             charDB.specStats.shown = val
-            LuckyAltManager.SpecStats:SetShown(val)
+            LuckyAltToolkit.SpecStats:SetShown(val)
         end,
     })
 
@@ -49,7 +49,7 @@ function LuckyAltManager.Settings:Init(db, charDB)
     local overrideBtn = LuckyUI.CreateButton(panel.content, "Customise Stat Weights", 160, 24)
     overrideBtn:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -6)
     overrideBtn:SetScript("OnClick", function()
-        LuckyAltManager.StatWeightOverrides:Open()
+        LuckyAltToolkit.StatWeightOverrides:Open()
     end)
 
     local note = panel.content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -73,7 +73,7 @@ function LuckyAltManager.Settings:Init(db, charDB)
         choices  = TRI_CHOICES,
         onChange = function(val)
             db.questRewardAdvisor.shown = val
-            LuckyAltManager.QuestRewardAdvisor:SetShown(val)
+            LuckyAltToolkit.QuestRewardAdvisor:SetShown(val)
         end,
     })
 
@@ -112,7 +112,7 @@ function LuckyAltManager.Settings:Init(db, charDB)
         choices  = TRI_CHOICES,
         onChange = function(val)
             db.delversCall.shown = val
-            LuckyAltManager.DelversCall:SetShown(val)
+            LuckyAltToolkit.DelversCall:SetShown(val)
         end,
     })
 

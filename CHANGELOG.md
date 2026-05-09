@@ -12,4 +12,4 @@
 - Minimap button for quick access to settings.
 - Opacity slider for floating windows when your cursor is not over them.
 - "While Leveling" mode for most features that turns them off automatically once you reach the level cap.
-- `/lam` slash command to open the settings panel.
+- `/lat` slash command to open the settings panel.

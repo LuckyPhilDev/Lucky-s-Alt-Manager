@@ -2,8 +2,8 @@
 -- Displays a small floating window showing the secondary stat priority
 -- for the player's current specialization.
 
-LuckyAltManager = LuckyAltManager or {}
-LuckyAltManager.SpecStats = {}
+LuckyAltToolkit = LuckyAltToolkit or {}
+LuckyAltToolkit.SpecStats = {}
 
 local FRAME_WIDTH  = 260
 local FRAME_HEIGHT = 52
@@ -64,14 +64,14 @@ local function UpdateDisplay()
     if not statsFrame then return end
 
     local specID = GetCurrentSpecID()
-    local data   = specID and LuckyAltManager.StatPriorities[specID]
+    local data   = specID and LuckyAltToolkit.StatPriorities[specID]
 
-    if not LuckyAltManager.IsFeatureActive(db.shown) or not data then
+    if not LuckyAltToolkit.IsFeatureActive(db.shown) or not data then
         statsFrame:Hide()
         return
     end
 
-    local weights, hasOverrides = LuckyAltManager.GetStatWeights(specID)
+    local weights, hasOverrides = LuckyAltToolkit.GetStatWeights(specID)
     if hasOverrides and weights then
         statsFrame.specText:SetText("|cffffd100" .. data.label .. "|r |cff8a7e6a(Custom)|r")
         statsFrame.priorityText:SetText(BuildWeightString(weights))
@@ -83,7 +83,7 @@ local function UpdateDisplay()
 end
 
 local function BuildFrame()
-    local f = CreateFrame("Frame", "LuckyAltManagerSpecStatsFrame", UIParent, "BackdropTemplate")
+    local f = CreateFrame("Frame", "LuckyAltToolkitSpecStatsFrame", UIParent, "BackdropTemplate")
     f:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
     f:SetFrameStrata("MEDIUM")
     f:SetClampedToScreen(true)
@@ -127,11 +127,11 @@ local function BuildFrame()
         GameTooltip:Show()
     end)
     f:SetScript("OnLeave", function(self)
-        self:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+        self:SetAlpha(LuckyAltToolkitDB.windowAlpha / 100)
         GameTooltip:Hide()
     end)
 
-    f:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+    f:SetAlpha(LuckyAltToolkitDB.windowAlpha / 100)
 
     -- Close button
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
@@ -167,7 +167,7 @@ end
 
 -- ── Public API ────────────────────────────────────────────────────────────────
 
-function LuckyAltManager.SpecStats:Init(database)
+function LuckyAltToolkit.SpecStats:Init(database)
     db = database
 
     BuildFrame()
@@ -185,17 +185,17 @@ function LuckyAltManager.SpecStats:Init(database)
     end)
 end
 
-function LuckyAltManager.SpecStats:SetShown(value)
+function LuckyAltToolkit.SpecStats:SetShown(value)
     db.shown = value
     UpdateDisplay()
 end
 
-function LuckyAltManager.SpecStats:RefreshDisplay()
+function LuckyAltToolkit.SpecStats:RefreshDisplay()
     UpdateDisplay()
 end
 
-function LuckyAltManager.SpecStats:ApplyAlpha()
+function LuckyAltToolkit.SpecStats:ApplyAlpha()
     if statsFrame then
-        statsFrame:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+        statsFrame:SetAlpha(LuckyAltToolkitDB.windowAlpha / 100)
     end
 end

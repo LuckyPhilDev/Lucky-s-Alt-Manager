@@ -8,9 +8,9 @@
 --   ">"  = clearly better
 --   ">>" = much better (significant gap, avoid the lower stat)
 
-LuckyAltManager = LuckyAltManager or {}
+LuckyAltToolkit = LuckyAltToolkit or {}
 
-LuckyAltManager.StatPriorities = {
+LuckyAltToolkit.StatPriorities = {
 
     -- ── Death Knight ──────────────────────────────────────────────────────────
     [250] = {  -- Blood

@@ -1,8 +1,8 @@
 -- StatWeightOverrides
 -- Per-spec stat weight customization dialog and shared weight computation.
 
-LuckyAltManager = LuckyAltManager or {}
-LuckyAltManager.StatWeightOverrides = {}
+LuckyAltToolkit = LuckyAltToolkit or {}
+LuckyAltToolkit.StatWeightOverrides = {}
 
 local STATS     = { "Crit", "Haste", "Mastery", "Vers" }
 local SPEC_X    = 16
@@ -42,7 +42,7 @@ local editBoxes = {}
 -- ── Weight computation ───────────────────────────────────────────────────────
 
 local function ComputeDefaultWeights(specID)
-    local data = LuckyAltManager.StatPriorities[specID]
+    local data = LuckyAltToolkit.StatPriorities[specID]
     if not data then return nil end
     local weights = {}
     local w = 1.0
@@ -58,7 +58,7 @@ end
 
 --- Returns effective stat weights for a spec, applying user overrides.
 --- Second return value is true when overrides are active.
-function LuckyAltManager.GetStatWeights(specID)
+function LuckyAltToolkit.GetStatWeights(specID)
     if db then
         local overrides = db.statWeightOverrides and db.statWeightOverrides[specID]
         if overrides and next(overrides) then
@@ -74,14 +74,14 @@ function LuckyAltManager.GetStatWeights(specID)
 end
 
 --- Returns default computed weights (ignoring overrides).
-function LuckyAltManager.GetDefaultStatWeights(specID)
+function LuckyAltToolkit.GetDefaultStatWeights(specID)
     return ComputeDefaultWeights(specID)
 end
 
 -- ── Helpers ──────────────────────────────────────────────────────────────────
 
 local function GetSpecShortName(specID, className)
-    local data = LuckyAltManager.StatPriorities[specID]
+    local data = LuckyAltToolkit.StatPriorities[specID]
     if not data then return tostring(specID) end
     local escaped = className:gsub("([%-%^%$%(%)%%%.%[%]%*%+%?])", "%%%1")
     return data.label:gsub("%s+" .. escaped .. "$", "")
@@ -100,8 +100,8 @@ local function SaveEditBoxValue(specID, stat, text)
             end
         end
     end
-    if LuckyAltManager.SpecStats.RefreshDisplay then
-        LuckyAltManager.SpecStats:RefreshDisplay()
+    if LuckyAltToolkit.SpecStats.RefreshDisplay then
+        LuckyAltToolkit.SpecStats:RefreshDisplay()
     end
 end
 
@@ -188,7 +188,7 @@ local function BuildDialog()
         y = y + 22
 
         for _, specID in ipairs(specIDs) do
-            local data = LuckyAltManager.StatPriorities[specID]
+            local data = LuckyAltToolkit.StatPriorities[specID]
             if data then
                 local defaults = ComputeDefaultWeights(specID)
 
@@ -226,8 +226,8 @@ local function BuildDialog()
                 box.placeholder:Show()
             end
         end
-        if LuckyAltManager.SpecStats.RefreshDisplay then
-            LuckyAltManager.SpecStats:RefreshDisplay()
+        if LuckyAltToolkit.SpecStats.RefreshDisplay then
+            LuckyAltToolkit.SpecStats:RefreshDisplay()
         end
     end)
 
@@ -240,11 +240,11 @@ end
 
 -- ── Public API ───────────────────────────────────────────────────────────────
 
-function LuckyAltManager.StatWeightOverrides:Init(database)
+function LuckyAltToolkit.StatWeightOverrides:Init(database)
     db = database
 end
 
-function LuckyAltManager.StatWeightOverrides:Open()
+function LuckyAltToolkit.StatWeightOverrides:Open()
     if not dialog then
         BuildDialog()
     end

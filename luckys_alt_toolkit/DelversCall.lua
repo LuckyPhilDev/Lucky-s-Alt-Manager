@@ -1,8 +1,8 @@
 -- Delver's Call Tracker module
 -- Shows incomplete quests, completion progress, and remaining XP potential.
 
-LuckyAltManager = LuckyAltManager or {}
-LuckyAltManager.DelversCall = {}
+LuckyAltToolkit = LuckyAltToolkit or {}
+LuckyAltToolkit.DelversCall = {}
 
 local QUEST_PREFIX     = "Delver's Call"
 local TOTAL_QUESTS     = 10
@@ -165,11 +165,11 @@ local function UpdateDisplay()
     local fillWidth = math.max(1, math.floor(trackerFrame.barMaxWidth * fillPct))
     trackerFrame.barFill:SetWidth(fillWidth)
 
-    trackerFrame:SetShown(LuckyAltManager.IsFeatureActive(db.shown))
+    trackerFrame:SetShown(LuckyAltToolkit.IsFeatureActive(db.shown))
 end
 
 local function BuildTrackerFrame()
-    local f = CreateFrame("Frame", "LuckyAltManagerDelversCallFrame", UIParent, "BackdropTemplate")
+    local f = CreateFrame("Frame", "LuckyAltToolkitDelversCallFrame", UIParent, "BackdropTemplate")
     local FRAME_HEIGHT = TOP_H + TOTAL_QUESTS * QUEST_ROW_H + BOTTOM_H
     f:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
     f:SetFrameStrata("MEDIUM")
@@ -218,11 +218,11 @@ local function BuildTrackerFrame()
         GameTooltip:Show()
     end)
     f:SetScript("OnLeave", function(self)
-        self:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+        self:SetAlpha(LuckyAltToolkitDB.windowAlpha / 100)
         GameTooltip:Hide()
     end)
 
-    f:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+    f:SetAlpha(LuckyAltToolkitDB.windowAlpha / 100)
 
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     closeBtn:SetSize(18, 18)
@@ -307,7 +307,7 @@ local function RegisterSlash()
             UpdateDisplay()
         else
             db.shown = (db.shown == "off") and "on" or "off"
-            if LuckyAltManager.IsFeatureActive(db.shown) then
+            if LuckyAltToolkit.IsFeatureActive(db.shown) then
                 trackerFrame:Show()
                 UpdateDisplay()
             else
@@ -319,7 +319,7 @@ end
 
 -- ── Public API ────────────────────────────────────────────────────────────────
 
-function LuckyAltManager.DelversCall:Init(database)
+function LuckyAltToolkit.DelversCall:Init(database)
     db = database
 
     BuildTrackerFrame()
@@ -343,16 +343,16 @@ function LuckyAltManager.DelversCall:Init(database)
     DevLog("Loaded — xpPerQuest=" .. tostring(db.xpPerQuest))
 end
 
-function LuckyAltManager.DelversCall:ApplyAlpha()
+function LuckyAltToolkit.DelversCall:ApplyAlpha()
     if trackerFrame then
-        trackerFrame:SetAlpha(LuckyAltManagerDB.windowAlpha / 100)
+        trackerFrame:SetAlpha(LuckyAltToolkitDB.windowAlpha / 100)
     end
 end
 
-function LuckyAltManager.DelversCall:SetShown(value)
+function LuckyAltToolkit.DelversCall:SetShown(value)
     db.shown = value
     if trackerFrame then
-        local active = LuckyAltManager.IsFeatureActive(value)
+        local active = LuckyAltToolkit.IsFeatureActive(value)
         trackerFrame:SetShown(active)
         if active then UpdateDisplay() end
     end

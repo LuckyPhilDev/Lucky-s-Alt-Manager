@@ -1,13 +1,13 @@
 ## Interface: 120000
-## Title: Lucky's Alt Manager
+## Title: Lucky's Alt Toolkit
 ## Notes: Leveling and alt management tools.
 ## Version: 1.0.0
 ## Author: Lucky Phil
-## SavedVariables: LuckyAltManagerDB
-## SavedVariablesPerCharacter: LuckyAltManagerCharDB
+## SavedVariables: LuckyAltToolkitDB
+## SavedVariablesPerCharacter: LuckyAltToolkitCharDB
 ## OptionalDeps: Luckys_Utils
 
-luckys_alt_manager.lua
+luckys_alt_toolkit.lua
 StatPriorities.lua
 StatWeightOverrides.lua
 SpecStats.lua

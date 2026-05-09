@@ -1,11 +1,11 @@
--- Lucky's Alt Manager
+-- Lucky's Alt Toolkit
 -- Entry point and initialization.
 
-LuckyAltManager = LuckyAltManager or {}
+LuckyAltToolkit = LuckyAltToolkit or {}
 
-local ADDON_NAME = "luckys_alt_manager"
+local ADDON_NAME = "luckys_alt_toolkit"
 
-LuckyAltManager.MAX_LEVEL = 90
+LuckyAltToolkit.MAX_LEVEL = 90
 
 local DB_DEFAULTS = {
     devMode = false,
@@ -40,17 +40,17 @@ local CHAR_DB_DEFAULTS = {
 
 local PREFIX = "|cffc9a84cAlt Manager|r:"
 
-function LuckyAltManager.DevLog(module, msg)
-    if LuckyAltManagerDB and LuckyAltManagerDB.devMode then
+function LuckyAltToolkit.DevLog(module, msg)
+    if LuckyAltToolkitDB and LuckyAltToolkitDB.devMode then
         print(PREFIX .. " |cff8a7e6a[" .. module .. "]|r " .. tostring(msg))
     end
 end
 
 --- Resolve a 3-way setting ("on", "off", "leveling") to a boolean.
-function LuckyAltManager.IsFeatureActive(settingValue)
+function LuckyAltToolkit.IsFeatureActive(settingValue)
     if settingValue == "on" then return true end
     if settingValue == "leveling" then
-        return UnitLevel("player") < LuckyAltManager.MAX_LEVEL
+        return UnitLevel("player") < LuckyAltToolkit.MAX_LEVEL
     end
     return false
 end
@@ -79,12 +79,12 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:SetScript("OnEvent", function(self, event, addonName)
     if event == "PLAYER_LEVEL_UP" then
-        if UnitLevel("player") >= LuckyAltManager.MAX_LEVEL then
-            if LuckyAltManagerCharDB.specStats.shown == "leveling" then
-                LuckyAltManager.SpecStats:SetShown("leveling")
+        if UnitLevel("player") >= LuckyAltToolkit.MAX_LEVEL then
+            if LuckyAltToolkitCharDB.specStats.shown == "leveling" then
+                LuckyAltToolkit.SpecStats:SetShown("leveling")
             end
-            if LuckyAltManagerDB.delversCall.shown == "leveling" then
-                LuckyAltManager.DelversCall:SetShown("leveling")
+            if LuckyAltToolkitDB.delversCall.shown == "leveling" then
+                LuckyAltToolkit.DelversCall:SetShown("leveling")
             end
         end
         return
@@ -92,60 +92,60 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
 
     if event ~= "ADDON_LOADED" or addonName ~= ADDON_NAME then return end
 
-    LuckyAltManagerDB = LuckyAltManagerDB or {}  ---@diagnostic disable-line: lowercase-global
-    ApplyDefaults(LuckyAltManagerDB, DB_DEFAULTS)
+    LuckyAltToolkitDB = LuckyAltToolkitDB or {}  ---@diagnostic disable-line: lowercase-global
+    ApplyDefaults(LuckyAltToolkitDB, DB_DEFAULTS)
 
-    LuckyAltManagerCharDB = LuckyAltManagerCharDB or {}  ---@diagnostic disable-line: lowercase-global
+    LuckyAltToolkitCharDB = LuckyAltToolkitCharDB or {}  ---@diagnostic disable-line: lowercase-global
 
     -- One-time migration: move the (previously global) stat-priority window
     -- settings into per-character storage so existing users keep their state.
-    if LuckyAltManagerDB.specStats and not LuckyAltManagerCharDB._migratedSpecStats then
-        LuckyAltManagerCharDB.specStats = {
-            shown    = LuckyAltManagerDB.specStats.shown,
-            framePos = LuckyAltManagerDB.specStats.framePos,
+    if LuckyAltToolkitDB.specStats and not LuckyAltToolkitCharDB._migratedSpecStats then
+        LuckyAltToolkitCharDB.specStats = {
+            shown    = LuckyAltToolkitDB.specStats.shown,
+            framePos = LuckyAltToolkitDB.specStats.framePos,
         }
-        LuckyAltManagerCharDB._migratedSpecStats = true
-        LuckyAltManagerDB.specStats = nil
+        LuckyAltToolkitCharDB._migratedSpecStats = true
+        LuckyAltToolkitDB.specStats = nil
     end
 
-    ApplyDefaults(LuckyAltManagerCharDB, CHAR_DB_DEFAULTS)
+    ApplyDefaults(LuckyAltToolkitCharDB, CHAR_DB_DEFAULTS)
 
     -- Migrate boolean -> tri-state for existing installs
-    MigrateBoolToTriState(LuckyAltManagerCharDB.specStats, "shown")
-    MigrateBoolToTriState(LuckyAltManagerDB.questRewardAdvisor, "shown")
-    MigrateBoolToTriState(LuckyAltManagerDB.autoQuest, "enabled")
-    MigrateBoolToTriState(LuckyAltManagerDB.skipCinematics, "enabled")
-    MigrateBoolToTriState(LuckyAltManagerDB.delversCall, "shown")
+    MigrateBoolToTriState(LuckyAltToolkitCharDB.specStats, "shown")
+    MigrateBoolToTriState(LuckyAltToolkitDB.questRewardAdvisor, "shown")
+    MigrateBoolToTriState(LuckyAltToolkitDB.autoQuest, "enabled")
+    MigrateBoolToTriState(LuckyAltToolkitDB.skipCinematics, "enabled")
+    MigrateBoolToTriState(LuckyAltToolkitDB.delversCall, "shown")
 
-    LuckyAltManager.StatWeightOverrides:Init(LuckyAltManagerDB)
-    LuckyAltManager.DelversCall:Init(LuckyAltManagerDB.delversCall)
-    LuckyAltManager.SpecStats:Init(LuckyAltManagerCharDB.specStats)
-    LuckyAltManager.QuestRewardAdvisor:Init(LuckyAltManagerDB.questRewardAdvisor)
-    LuckyAltManager.SkipCinematics:Init(LuckyAltManagerDB.skipCinematics)
-    LuckyAltManager.AutoQuest:Init(LuckyAltManagerDB.autoQuest)
-    LuckyAltManager.Settings:Init(LuckyAltManagerDB, LuckyAltManagerCharDB)
+    LuckyAltToolkit.StatWeightOverrides:Init(LuckyAltToolkitDB)
+    LuckyAltToolkit.DelversCall:Init(LuckyAltToolkitDB.delversCall)
+    LuckyAltToolkit.SpecStats:Init(LuckyAltToolkitCharDB.specStats)
+    LuckyAltToolkit.QuestRewardAdvisor:Init(LuckyAltToolkitDB.questRewardAdvisor)
+    LuckyAltToolkit.SkipCinematics:Init(LuckyAltToolkitDB.skipCinematics)
+    LuckyAltToolkit.AutoQuest:Init(LuckyAltToolkitDB.autoQuest)
+    LuckyAltToolkit.Settings:Init(LuckyAltToolkitDB, LuckyAltToolkitCharDB)
 
-    SLASH_LUCKYALTMANAGER1 = "/lam"
-    SlashCmdList["LUCKYALTMANAGER"] = function()
-        LuckySettings:Open(LuckyAltManager.Settings.category)
+    SLASH_LUCKYALTTOOLKIT1 = "/lat"
+    SlashCmdList["LUCKYALTTOOLKIT"] = function()
+        LuckySettings:Open(LuckyAltToolkit.Settings.category)
     end
 
     LuckyMinimap:Create({
-        name    = "LuckyAltManagerMinimapButton",
+        name    = "LuckyAltToolkitMinimapButton",
         icon    = "Interface\\Icons\\Achievement_Character_Human_Male",
         dbKey   = "minimap",
-        db      = LuckyAltManagerDB,
+        db      = LuckyAltToolkitDB,
         onClick = function(_, mouseBtn)
             if mouseBtn == "MiddleButton" then
-                LuckyAltManagerDB.devMode = not LuckyAltManagerDB.devMode
-                local state = LuckyAltManagerDB.devMode and "ON" or "OFF"
+                LuckyAltToolkitDB.devMode = not LuckyAltToolkitDB.devMode
+                local state = LuckyAltToolkitDB.devMode and "ON" or "OFF"
                 print(PREFIX .. " Dev mode " .. state)
             else
-                LuckySettings:Open(LuckyAltManager.Settings.category)
+                LuckySettings:Open(LuckyAltToolkit.Settings.category)
             end
         end,
         tooltip = function(tt)
-            tt:AddLine(LuckyUI.WC.goldPrimary .. "Lucky's Alt Manager" .. LuckyUI.WC.reset)
+            tt:AddLine(LuckyUI.WC.goldPrimary .. "Lucky's Alt Toolkit" .. LuckyUI.WC.reset)
             tt:AddLine(" ")
             tt:AddLine("Click: Open settings", 0.91, 0.86, 0.78)
             tt:AddLine("Middle-click: Toggle dev mode", 0.54, 0.49, 0.42)

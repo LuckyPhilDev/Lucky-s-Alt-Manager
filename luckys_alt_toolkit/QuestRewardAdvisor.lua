@@ -3,8 +3,8 @@
 -- overlays spec icons on each item indicating which spec(s) prefer it,
 -- based on secondary stat priority data in StatPriorities.lua.
 
-LuckyAltManager = LuckyAltManager or {}
-LuckyAltManager.QuestRewardAdvisor = {}
+LuckyAltToolkit = LuckyAltToolkit or {}
+LuckyAltToolkit.QuestRewardAdvisor = {}
 
 local ICON_SIZE = 16
 
@@ -19,7 +19,7 @@ local db
 local overlays = {}
 
 local function DevLog(msg)
-    LuckyAltManager.DevLog("QuestRewardAdvisor", msg)
+    LuckyAltToolkit.DevLog("QuestRewardAdvisor", msg)
 end
 
 -- ── Scoring ───────────────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ local function GetRelevantSpecIDs()
     local result = {}
     for i = 1, numSpecs do
         local specID = GetSpecializationInfoForClassID(classID, i)
-        local data = specID and LuckyAltManager.StatPriorities[specID]
+        local data = specID and LuckyAltToolkit.StatPriorities[specID]
         if data and data.stats then
             table.insert(result, specID)
         end
@@ -153,7 +153,7 @@ end
 
 local function AnnotateChoices()
     ClearOverlays()
-    if not LuckyAltManager.IsFeatureActive(db.shown) then return end
+    if not LuckyAltToolkit.IsFeatureActive(db.shown) then return end
 
     local numChoices = GetNumQuestChoices()
     if not numChoices or numChoices < 2 then return end
@@ -192,8 +192,8 @@ local function AnnotateChoices()
     -- For each spec, score every item and pick the best
     local specBestItem = {}
     for _, specID in ipairs(specIDs) do
-        local specData = LuckyAltManager.StatPriorities[specID]
-        local weights = LuckyAltManager.GetStatWeights(specID)
+        local specData = LuckyAltToolkit.StatPriorities[specID]
+        local weights = LuckyAltToolkit.GetStatWeights(specID)
         local bestIdx, bestScore = nil, 0
         local scoreParts = {}
         for i = 1, numChoices do
@@ -236,7 +236,7 @@ end
 
 -- ── Public API ────────────────────────────────────────────────────────────────
 
-function LuckyAltManager.QuestRewardAdvisor:Init(database)
+function LuckyAltToolkit.QuestRewardAdvisor:Init(database)
     db = database
 
     if QuestInfo_ShowRewards then
@@ -266,7 +266,7 @@ function LuckyAltManager.QuestRewardAdvisor:Init(database)
     end)
 end
 
-function LuckyAltManager.QuestRewardAdvisor:SetShown(value)
+function LuckyAltToolkit.QuestRewardAdvisor:SetShown(value)
     db.shown = value
-    if not LuckyAltManager.IsFeatureActive(value) then ClearOverlays() end
+    if not LuckyAltToolkit.IsFeatureActive(value) then ClearOverlays() end
 end

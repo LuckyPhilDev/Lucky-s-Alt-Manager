@@ -1,4 +1,6 @@
-# Lucky's Alt Manager
+[Join the Discord](https://discord.gg/87HRHcAYP)
+
+# Lucky's Alt Toolkit
 
 A toolkit of small quality-of-life features for leveling and managing alts.
 
@@ -20,12 +22,12 @@ Most features support a "While Leveling" mode that turns them off automatically 
 
 Install from CurseForge. Lucky's Utils is required and will be installed automatically by the CurseForge app.
 
-For manual installation, drop the `Lucky's Alt Manager` folder into `World of Warcraft/_retail_/Interface/AddOns/`. Lucky's Utils must also be installed.
+For manual installation, drop the `Lucky's Alt Toolkit` folder into `World of Warcraft/_retail_/Interface/AddOns/`. Lucky's Utils must also be installed.
 
 ## Usage
 
 1. Log in. The minimap button and any enabled floating windows will appear.
-2. Click the minimap button or type `/lam` to open settings.
+2. Click the minimap button or type `/lat` to open settings.
 3. Toggle features on, off, or only while leveling.
 4. Drag any floating window to reposition. Positions are remembered.
 
@@ -33,13 +35,13 @@ For manual installation, drop the `Lucky's Alt Manager` folder into `World of Wa
 
 | Command | Action |
 |---|---|
-| `/lam` | Open the settings panel |
+| `/lat` | Open the settings panel |
 | `/delvers` or `/dct` | Toggle the Delver's Call tracker window |
 | `/dct reset` | Clear the saved per-quest XP value (re-probes on next quest update) |
 
 ## Settings
 
-Open via the minimap button or **Game Menu → Options → AddOns → Lucky's Alt Manager**.
+Open via the minimap button or **Game Menu → Options → AddOns → Lucky's Alt Toolkit**.
 
 - **Windows** — Opacity slider for floating windows when your cursor is not over them; toggle for the Stat Priority window.
 - **Quest Rewards** — Toggle for the spec hint overlays.
