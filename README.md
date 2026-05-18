@@ -10,7 +10,7 @@ A toolkit of small quality-of-life features for leveling and managing alts.
   - Hover the operators to see what they mean: equal, marginally better, clearly better, or much better.
   - Hides automatically for specs without data.
 - **Customisable Stat Weights** — Override the default weight values for any spec via a dedicated dialog, useful if you prefer your own numbers or follow a guide that disagrees.
-- **Quest Reward Spec Hints** — While leveling, overlays small spec icons on quest choice rewards to show which of your specs would prefer each item, scored against the stat priorities. Works with the default quest UI and DialogueUI.
+- **Quest Reward Spec Hints** — While leveling, overlays small spec icons on quest choice rewards to show which of your specs would prefer each item, scored against the stat priorities. Skips weapons your spec can't equip and respects each spec's primary stat, so a Restoration Druid won't see Agility staves recommended. Tags main hand and off hand picks separately, so a quest offering a weapon and an off-hand can light up both. Works with the default quest UI and DialogueUI.
 - **Auto Accept & Hand In Quests** — Skips dialog clicks for routine quests. Pauses while Shift is held, skips Delver's Call quests, and skips quests with a reward choice so you can pick yours.
 - **Skip Cinematics** — Automatically skips in-game cinematics and movies.
 - **Delver's Call Tracker** — A floating window listing the ten weekly Delver's Call quests, marking each as available, in-progress, or done, with a progress bar and an estimate of XP earned and remaining.

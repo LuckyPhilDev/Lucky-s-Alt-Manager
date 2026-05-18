@@ -5,7 +5,7 @@
 ### Added
 - Floating Stat Priority window showing your current spec's secondary stat priority, with colored relationship indicators and a hover tooltip that explains them.
 - Customisable per-spec stat weights via a dedicated dialog.
-- Quest Reward Spec Hints overlay icons on quest choice rewards while leveling, indicating which of your specs prefers each item.
+- Quest Reward Spec Hints overlay icons on quest choice rewards while leveling, indicating which of your specs prefers each item. Skips weapons your spec can't use and respects each spec's primary stat, with separate picks for main hand and off hand.
 - Auto Accept and Hand In Quests, with Shift-to-pause, skipping Delver's Call quests and quests that have a reward choice.
 - Skip Cinematics for in-game cinematics and movies.
 - Delver's Call tracker showing weekly completion progress, an XP earned and remaining estimate, and a progress bar.

@@ -10,6 +10,74 @@
 
 LuckyAltToolkit = LuckyAltToolkit or {}
 
+-- Primary stat per spec ("Agi" / "Str" / "Int").
+-- Used to filter quest reward weapons that carry a primary stat the spec can't use.
+LuckyAltToolkit.SpecPrimaryStat = {
+    [250]="Str", [251]="Str", [252]="Str",       -- Death Knight
+    [577]="Agi", [581]="Agi", [1480]="Agi",      -- Demon Hunter
+    [102]="Int", [103]="Agi", [104]="Agi", [105]="Int",  -- Druid
+    [1467]="Int", [1468]="Int", [1473]="Int",    -- Evoker
+    [253]="Agi", [254]="Agi", [255]="Agi",       -- Hunter
+    [62]="Int",  [63]="Int",  [64]="Int",        -- Mage
+    [268]="Agi", [269]="Agi", [270]="Int",       -- Monk
+    [65]="Int",  [66]="Str",  [70]="Str",        -- Paladin
+    [256]="Int", [257]="Int", [258]="Int",       -- Priest
+    [259]="Agi", [260]="Agi", [261]="Agi",       -- Rogue
+    [262]="Int", [263]="Agi", [264]="Int",       -- Shaman
+    [265]="Int", [266]="Int", [267]="Int",       -- Warlock
+    [71]="Str",  [72]="Str",  [73]="Str",        -- Warrior
+}
+
+-- Weapon eligibility per spec. Flags:
+--   twoH       - 2H weapons (INVTYPE_2HWEAPON)
+--   oneH       - single 1H without dual wield (uses one MH slot)
+--   dualWield  - dual wields 1H weapons
+--   shield     - can equip a shield as off-hand
+--   offhand    - can equip a caster off-hand frill (INVTYPE_HOLDABLE)
+--   ranged    - bows / guns / crossbows (INVTYPE_RANGED / RANGEDRIGHT)
+LuckyAltToolkit.SpecWeapons = {
+    [250] = { twoH=true, dualWield=true },                  -- Blood DK
+    [251] = { twoH=true, dualWield=true },                  -- Frost DK
+    [252] = { twoH=true, dualWield=true },                  -- Unholy DK
+    [577] = { dualWield=true },                             -- Havoc DH
+    [581] = { dualWield=true },                             -- Vengeance DH
+    [1480]= { dualWield=true },                             -- Devourer DH
+    [102] = { twoH=true },                                  -- Balance Druid
+    [103] = { twoH=true },                                  -- Feral
+    [104] = { twoH=true },                                  -- Guardian
+    [105] = { twoH=true },                                  -- Restoration Druid
+    [1467]= { oneH=true, offhand=true, twoH=true },         -- Devastation Evoker
+    [1468]= { oneH=true, offhand=true, twoH=true },         -- Preservation
+    [1473]= { oneH=true, offhand=true, twoH=true },         -- Augmentation
+    [253] = { ranged=true },                                -- BM Hunter
+    [254] = { ranged=true },                                -- MM Hunter
+    [255] = { twoH=true },                                  -- Survival Hunter
+    [62]  = { oneH=true, offhand=true, twoH=true },         -- Arcane Mage
+    [63]  = { oneH=true, offhand=true, twoH=true },         -- Fire Mage
+    [64]  = { oneH=true, offhand=true, twoH=true },         -- Frost Mage
+    [268] = { twoH=true },                                  -- Brewmaster Monk
+    [269] = { twoH=true, dualWield=true },                  -- Windwalker
+    [270] = { oneH=true, offhand=true, twoH=true },         -- Mistweaver
+    [65]  = { oneH=true, shield=true, offhand=true },       -- Holy Paladin
+    [66]  = { oneH=true, shield=true },                     -- Protection Paladin
+    [70]  = { twoH=true },                                  -- Retribution
+    [256] = { oneH=true, offhand=true, twoH=true },         -- Discipline
+    [257] = { oneH=true, offhand=true, twoH=true },         -- Holy Priest
+    [258] = { oneH=true, offhand=true, twoH=true },         -- Shadow
+    [259] = { dualWield=true },                             -- Assassination
+    [260] = { dualWield=true },                             -- Outlaw
+    [261] = { dualWield=true },                             -- Subtlety
+    [262] = { oneH=true, offhand=true, twoH=true },         -- Elemental
+    [263] = { dualWield=true },                             -- Enhancement
+    [264] = { oneH=true, shield=true, offhand=true },       -- Restoration Shaman
+    [265] = { oneH=true, offhand=true, twoH=true },         -- Affliction
+    [266] = { oneH=true, offhand=true, twoH=true },         -- Demonology
+    [267] = { oneH=true, offhand=true, twoH=true },         -- Destruction
+    [71]  = { twoH=true },                                  -- Arms
+    [72]  = { twoH=true, dualWield=true },                  -- Fury (Titan's Grip)
+    [73]  = { oneH=true, shield=true },                     -- Protection Warrior
+}
+
 LuckyAltToolkit.StatPriorities = {
 
     -- ── Death Knight ──────────────────────────────────────────────────────────

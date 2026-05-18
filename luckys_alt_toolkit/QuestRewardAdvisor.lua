@@ -15,6 +15,68 @@ local STAT_KEY = {
     Vers    = "ITEM_MOD_VERSATILITY",
 }
 
+local PRIMARY_KEY = {
+    Agi = "ITEM_MOD_AGILITY_SHORT",
+    Str = "ITEM_MOD_STRENGTH_SHORT",
+    Int = "ITEM_MOD_INTELLECT_SHORT",
+}
+
+-- Slot-bucket lookup. Items group into "mainHand" or "offHand" so a quest
+-- offering both can highlight the best of each per spec.
+-- Eligibility for a given equipLoc is decided by SLOT_RULE.
+local SLOT_BUCKET = {
+    INVTYPE_2HWEAPON       = "mainHand",
+    INVTYPE_WEAPONMAINHAND = "mainHand",
+    INVTYPE_RANGED         = "mainHand",
+    INVTYPE_RANGEDRIGHT    = "mainHand",
+    INVTYPE_WEAPON         = "mainHand",  -- generic 1H, treated as MH
+    INVTYPE_WEAPONOFFHAND  = "offHand",
+    INVTYPE_SHIELD         = "offHand",
+    INVTYPE_HOLDABLE       = "offHand",
+}
+
+-- Slots where the primary-stat filter is meaningful. Armor slots are excluded
+-- because modern adapting items report only the current spec's primary via
+-- C_Item.GetItemStats, which would falsely filter out other specs.
+local PRIMARY_FILTER_SLOTS = {
+    INVTYPE_2HWEAPON       = true,
+    INVTYPE_WEAPON         = true,
+    INVTYPE_WEAPONMAINHAND = true,
+    INVTYPE_WEAPONOFFHAND  = true,
+    INVTYPE_RANGED         = true,
+    INVTYPE_RANGEDRIGHT    = true,
+    INVTYPE_HOLDABLE       = true,
+}
+
+-- Returns true if the spec's SpecWeapons flags allow this equipLoc.
+local function CanEquip(equipLoc, rules)
+    if not rules then return false end
+    if equipLoc == "INVTYPE_2HWEAPON"       then return rules.twoH == true end
+    if equipLoc == "INVTYPE_WEAPONMAINHAND" then return rules.oneH == true or rules.dualWield == true end
+    if equipLoc == "INVTYPE_WEAPON"         then return rules.oneH == true or rules.dualWield == true end
+    if equipLoc == "INVTYPE_WEAPONOFFHAND"  then return rules.dualWield == true end
+    if equipLoc == "INVTYPE_SHIELD"         then return rules.shield == true end
+    if equipLoc == "INVTYPE_HOLDABLE"       then return rules.offhand == true end
+    if equipLoc == "INVTYPE_RANGED"         then return rules.ranged == true end
+    if equipLoc == "INVTYPE_RANGEDRIGHT"    then return rules.ranged == true end
+    return true  -- armor and accessories: no weapon-slot restriction
+end
+
+-- Returns "Agi" / "Str" / "Int" if the item carries exactly one primary stat.
+-- Returns nil for items with no primary (rings, neck, trinkets, cloak, shields)
+-- or for stat-adapting items that report multiple primaries.
+local function GetItemPrimary(rawStats)
+    local found
+    for label, key in pairs(PRIMARY_KEY) do
+        local v = rawStats[key]
+        if v and v > 0 then
+            if found then return nil end  -- multiple primaries: treat as adaptive
+            found = label
+        end
+    end
+    return found
+end
+
 local db
 local overlays = {}
 
@@ -161,62 +223,99 @@ local function AnnotateChoices()
     local specIDs = GetRelevantSpecIDs()
     if #specIDs == 0 then return end
 
-    -- Fetch raw stats for each choice item
-    local itemStats = {}
+    -- Fetch raw stats and equipLoc for each choice item
+    local items = {}
     for i = 1, numChoices do
         local link = GetQuestItemLink("choice", i)
         if link then
             local raw = C_Item.GetItemStats(link)
             if raw and next(raw) then
-                itemStats[i] = raw
+                local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+                items[i] = {
+                    stats    = raw,
+                    equipLoc = equipLoc or "",
+                    primary  = GetItemPrimary(raw),
+                }
             end
         end
     end
 
     -- Log item stats
     for i = 1, numChoices do
-        if itemStats[i] then
+        local item = items[i]
+        if item then
             local parts = {}
             for statLabel, key in pairs(STAT_KEY) do
-                local val = itemStats[i][key]
+                local val = item.stats[key]
                 if val and val > 0 then
                     table.insert(parts, statLabel .. "=" .. val)
                 end
             end
-            DevLog("  Item " .. i .. ": " .. (next(parts) and table.concat(parts, ", ") or "no secondary stats"))
+            local secondaries = next(parts) and table.concat(parts, ", ") or "no secondary stats"
+            DevLog(string.format("  Item %d [%s, primary=%s]: %s",
+                i, item.equipLoc ~= "" and item.equipLoc or "?", item.primary or "none", secondaries))
         else
             DevLog("  Item " .. i .. ": no stats data")
         end
     end
 
-    -- For each spec, score every item and pick the best
-    local specBestItem = {}
+    -- For each spec, bucket eligible items by mainHand / offHand (or other)
+    -- and pick the best in each bucket. Items with no slot bucket (armor,
+    -- accessories) compete in their own implicit bucket.
+    local specBestItems = {}  -- specID -> { idx, idx, ... } (1-2 entries)
     for _, specID in ipairs(specIDs) do
-        local specData = LuckyAltToolkit.StatPriorities[specID]
-        local weights = LuckyAltToolkit.GetStatWeights(specID)
-        local bestIdx, bestScore = nil, 0
-        local scoreParts = {}
+        local specData    = LuckyAltToolkit.StatPriorities[specID]
+        local weights     = LuckyAltToolkit.GetStatWeights(specID)
+        local rules       = LuckyAltToolkit.SpecWeapons[specID]
+        local primaryNeed = LuckyAltToolkit.SpecPrimaryStat[specID]
+
+        -- bucket key -> { idx, score }
+        local best = {}
+        local logParts = {}
+
         for i = 1, numChoices do
-            if itemStats[i] then
-                local score = ScoreItem(itemStats[i], weights)
-                table.insert(scoreParts, string.format("#%d=%.1f", i, score))
-                if score > bestScore then
-                    bestScore = score
-                    bestIdx   = i
+            local item = items[i]
+            if item then
+                local primaryOK = (not PRIMARY_FILTER_SLOTS[item.equipLoc])
+                                  or (item.primary == nil)
+                                  or (item.primary == primaryNeed)
+                local slotOK    = CanEquip(item.equipLoc, rules)
+                if primaryOK and slotOK then
+                    local bucket = SLOT_BUCKET[item.equipLoc] or "other"
+                    local score  = ScoreItem(item.stats, weights)
+                    table.insert(logParts, string.format("#%d[%s]=%.1f", i, bucket, score))
+                    local cur = best[bucket]
+                    if not cur or score > cur.score then
+                        best[bucket] = { idx = i, score = score }
+                    end
+                else
+                    local reason = (not primaryOK and "primary" or "") .. (not slotOK and "/slot" or "")
+                    table.insert(logParts, string.format("#%d[skip:%s]", i, reason))
                 end
             end
         end
-        DevLog("  " .. specData.label .. ": " .. table.concat(scoreParts, ", ") .. " -> best=#" .. tostring(bestIdx))
-        if bestIdx then
-            specBestItem[specID] = bestIdx
+
+        local picks = {}
+        for _, entry in pairs(best) do
+            table.insert(picks, entry.idx)
+        end
+        DevLog(string.format("  %s: %s -> picks=%s",
+            specData.label,
+            table.concat(logParts, ", "),
+            #picks > 0 and table.concat(picks, ",") or "none"))
+
+        if #picks > 0 then
+            specBestItems[specID] = picks
         end
     end
 
     -- Invert: itemSpecMap[slotIndex] = { specID, ... }
     local itemSpecMap = {}
-    for specID, idx in pairs(specBestItem) do
-        itemSpecMap[idx] = itemSpecMap[idx] or {}
-        table.insert(itemSpecMap[idx], specID)
+    for specID, idxList in pairs(specBestItems) do
+        for _, idx in ipairs(idxList) do
+            itemSpecMap[idx] = itemSpecMap[idx] or {}
+            table.insert(itemSpecMap[idx], specID)
+        end
     end
 
     -- Find visible choice buttons
