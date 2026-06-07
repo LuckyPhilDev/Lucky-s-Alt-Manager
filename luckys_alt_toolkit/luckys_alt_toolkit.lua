@@ -149,7 +149,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
             tt:AddLine(" ")
             tt:AddLine("Click: Open settings", 0.91, 0.86, 0.78)
             tt:AddLine("Middle-click: Toggle dev mode", 0.54, 0.49, 0.42)
-            tt:AddLine("Shift+drag: Move button", 0.54, 0.49, 0.42)
+            tt:AddLine("Drag: Move button", 0.54, 0.49, 0.42)
         end,
     })
 
